@@ -5779,7 +5779,8 @@ function run() {
             const payload = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload;
             const requestID = payload.pull_request.node_id;
             console.log(`Running with ${requestID}`);
-            const { repository } = yield graphqlWithAuth(`
+            try {
+                const result = yield graphqlWithAuth(`
     mutation updatePR($pullRequestId: ID!, $title: String) {
       updatePullRequest(input:{pullRequestId:$pullRequestId, title:$title}) {
         pullRequest {
@@ -5787,11 +5788,16 @@ function run() {
         }
       }
   `, {
-                pullRequestId: requestID,
-                title: 'Just testing',
-            });
-            const response = JSON.stringify(repository, undefined, 2);
-            console.log(`The response payload: ${response}`);
+                    pullRequestId: requestID,
+                    title: 'Just testing',
+                });
+                const response = JSON.stringify(result, undefined, 2);
+                console.log(`The response payload: ${response}`);
+            }
+            catch (error) {
+                error();
+                _actions_core__WEBPACK_IMPORTED_MODULE_0__.error(`Request failed: ${JSON.stringify(error.message)}`);
+            }
         }
         catch (error) {
             _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(error.message);

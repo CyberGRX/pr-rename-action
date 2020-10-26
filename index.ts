@@ -25,8 +25,9 @@ async function run() {
     const requestID = payload.pull_request.node_id;
     console.log(`Running with ${requestID}`);
 
-    const { repository } = await graphqlWithAuth(
-      `
+    try {
+      const result = await graphqlWithAuth(
+        `
     mutation updatePR($pullRequestId: ID!, $title: String) {
       updatePullRequest(input:{pullRequestId:$pullRequestId, title:$title}) {
         pullRequest {
@@ -34,14 +35,18 @@ async function run() {
         }
       }
   `,
-      {
-        pullRequestId: requestID,
-        title: 'Just testing',
-      },
-    );
+        {
+          pullRequestId: requestID,
+          title: 'Just testing',
+        },
+      );
 
-    const response = JSON.stringify(repository, undefined, 2);
-    console.log(`The response payload: ${response}`);
+      const response = JSON.stringify(result, undefined, 2);
+      console.log(`The response payload: ${response}`);
+    } catch (error) {
+      error();
+      core.error(`Request failed: ${JSON.stringify(error.message)}`);
+    }
   } catch (error) {
     core.setFailed(error.message);
   }
