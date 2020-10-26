@@ -24,7 +24,7 @@ async function run() {
 
     const requestID = payload.pull_request.node_id;
 
-    const { repository } = await graphql(
+    const { repository } = await graphqlWithAuth(
       `
     mutation updatePR($pullRequestId: ID!, $title: String) {
       updatePullRequest(input:{pullRequestId:$pullRequestId, title:$title}) {
