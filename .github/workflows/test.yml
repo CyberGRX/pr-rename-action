@@ -2,7 +2,7 @@ name: Auto Rename
 
 on:
   pull_request:
-    types: [opened]
+    types: [opened, synchronize]
 
 jobs:
   rename_pr_job:
@@ -16,5 +16,7 @@ jobs:
       - name: Rename PR
         uses: ./ # Uses an action in the root directory
         id: pr-auto-namer
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           rename-regex: 'foo'
