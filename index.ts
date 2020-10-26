@@ -41,10 +41,8 @@ async function run() {
         },
       );
 
-      console.log('Finished up with the request');
-
-      //const response = JSON.stringify(result, undefined, 2);
-      //console.log(`The response payload: ${response}`);
+      const response = JSON.stringify(result, undefined, 2);
+      console.log(`The response payload: ${response}`);
     } catch (error) {
       console.log(`Request failed: ${JSON.stringify(error)}`);
     }
