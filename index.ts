@@ -44,7 +44,8 @@ async function run() {
       const response = JSON.stringify(result, undefined, 2);
       console.log(`The response payload: ${response}`);
     } catch (error) {
-      core.error(`Request failed: ${JSON.stringify(error)}`);
+      console.log(`Request failed: ${JSON.stringify(error)}`);
+      core.setFailed(error.message);
     }
   } catch (error) {
     core.setFailed(error.message);

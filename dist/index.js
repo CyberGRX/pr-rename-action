@@ -5795,7 +5795,8 @@ function run() {
                 console.log(`The response payload: ${response}`);
             }
             catch (error) {
-                _actions_core__WEBPACK_IMPORTED_MODULE_0__.error(`Request failed: ${JSON.stringify(error)}`);
+                console.log(`Request failed: ${JSON.stringify(error)}`);
+                _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(error.message);
             }
         }
         catch (error) {
