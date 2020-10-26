@@ -5789,15 +5789,16 @@ function run() {
       }
   `, {
                     pullRequestId: requestID,
-                    title: 'Just testing',
+                    title: 'Just testing 3',
                 });
-                const response = JSON.stringify(result, undefined, 2);
-                console.log(`The response payload: ${response}`);
+                console.log('Finished up with the request');
+                //const response = JSON.stringify(result, undefined, 2);
+                //console.log(`The response payload: ${response}`);
             }
             catch (error) {
                 console.log(`Request failed: ${JSON.stringify(error)}`);
-                _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(error.message);
             }
+            console.log('Done');
         }
         catch (error) {
             _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(error.message);
