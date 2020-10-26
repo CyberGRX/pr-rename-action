@@ -5778,6 +5778,7 @@ function run() {
             }
             const payload = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload;
             const requestID = payload.pull_request.node_id;
+            console.log(`Running with ${requestID}`);
             const { repository } = yield graphqlWithAuth(`
     mutation updatePR($pullRequestId: ID!, $title: String) {
       updatePullRequest(input:{pullRequestId:$pullRequestId, title:$title}) {

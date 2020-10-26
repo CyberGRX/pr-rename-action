@@ -23,6 +23,7 @@ async function run() {
       .payload as EventPayloads.WebhookPayloadPullRequest;
 
     const requestID = payload.pull_request.node_id;
+    console.log(`Running with ${requestID}`);
 
     const { repository } = await graphqlWithAuth(
       `

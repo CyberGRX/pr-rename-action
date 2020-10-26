@@ -22,7 +22,7 @@
     "typescript": "^3.7.5"
   },
   "scripts": {
-    "build": "ncc build index.ts --license licenses.txt",
+    "build": "npm run fmt && ncc build index.ts --license licenses.txt",
     "typecheck": "tsc --noEmit",
     "lint": "eslint --cache --ext .ts ./",
     "fmt": "eslint --cache --fix --ext .ts ./ && prettier --write **/*.ts"
