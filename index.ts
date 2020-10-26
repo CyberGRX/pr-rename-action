@@ -28,13 +28,13 @@ async function run() {
     try {
       const result = await graphqlWithAuth(
         `
-    mutation updatePR($pullRequestId: ID!, $title: String) {
-      updatePullRequest(input:{pullRequestId:$pullRequestId, title:$title}) {
-        pullRequest {
-          title
-        }
-      }
-  `,
+        mutation updatePR($pullRequestId: ID!, $title: String) {
+          updatePullRequest(input: {pullRequestId: $pullRequestId, title: $title}) {
+            pullRequest {
+              title
+            }
+          }
+        }`,
         {
           pullRequestId: requestID,
           title: 'Just testing 3',

@@ -5781,13 +5781,13 @@ function run() {
             console.log(`Running with ${requestID}`);
             try {
                 const result = yield graphqlWithAuth(`
-    mutation updatePR($pullRequestId: ID!, $title: String) {
-      updatePullRequest(input:{pullRequestId:$pullRequestId, title:$title}) {
-        pullRequest {
-          title
-        }
-      }
-  `, {
+        mutation updatePR($pullRequestId: ID!, $title: String) {
+          updatePullRequest(input: {pullRequestId: $pullRequestId, title: $title}) {
+            pullRequest {
+              title
+            }
+          }
+        }`, {
                     pullRequestId: requestID,
                     title: 'Just testing 3',
                 });
