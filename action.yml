@@ -1,0 +1,9 @@
+name: 'Hello World'
+description: 'Rename a PR on open using a regex'
+inputs:
+  rename: 
+    description: 'Regex with string replacement for renaming a PR'
+    required: true
+runs:
+  using: 'node12'
+  main: 'dist/index.js'

@@ -1,0 +1,20 @@
+name: Auto Rename
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  rename_pr_job:
+    runs-on: ubuntu-latest
+    name: Rename a PR
+    steps:
+      # To use this repository's private action,
+      # you must check out the repository
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Rename PR
+        uses: ./ # Uses an action in the root directory
+        id: pr-auto-namer
+        with:
+          rename-regex: 'foo'
