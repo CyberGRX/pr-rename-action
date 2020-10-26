@@ -5,11 +5,27 @@
   "main": "index.js",
   "dependencies": {
     "@actions/core": "^1.2.6",
-    "@actions/github": "^4.0.0"
+    "@actions/github": "^4.0.0",
+    "@octokit/graphql": "^4.3.1",
+    "@octokit/webhooks": "^7.15.0",
+    "tslib": "^1.10.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/lodash.pick": "^4.4.6",
+    "@types/node": "^13.7.0",
+    "@typescript-eslint/eslint-plugin": "^2.18.0",
+    "@typescript-eslint/parser": "^2.18.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "prettier": "^1.19.1",
+    "typescript": "^3.7.5"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "ncc build index.ts --license licenses.txt",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint --cache --ext .ts ./",
+    "fmt": "eslint --cache --fix --ext .ts ./ && prettier --write **/*.ts"
   },
   "repository": {
     "type": "git",

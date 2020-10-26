@@ -2,27 +2,6 @@ module.exports =
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 748:
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
-
-const core = __webpack_require__(482);
-const github = __webpack_require__(615);
-
-try {
-  // `who-to-greet` input defined in action metadata file
-  //const nameToGreet = core.getInput('who-to-greet');
-  //console.log(`Hello ${nameToGreet}!`);
-  const time = (new Date()).toTimeString();
-  //core.setOutput("time", time);
-  // Get the JSON webhook payload for the event that triggered the workflow
-  const payload = JSON.stringify(github.context.payload, undefined, 2)
-  console.log(`The event payload: ${payload}`);
-} catch (error) {
-  core.setFailed(error.message);
-}
-
-/***/ }),
-
 /***/ 978:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
@@ -5761,6 +5740,68 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
+/***/ 96:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(482);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(615);
+/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _octokit_graphql__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(79);
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
+
+
+function run() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const token = process.env['GITHUB_TOKEN'];
+            if (!token) {
+                _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed('GITHUB_TOKEN does not exist.');
+                return;
+            }
+            const graphqlWithAuth = _octokit_graphql__WEBPACK_IMPORTED_MODULE_2__.graphql.defaults({
+                headers: { authorization: `token ${token}` },
+            });
+            if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName !== 'pull_request') {
+                return;
+            }
+            const payload = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload;
+            const requestID = payload.pull_request.node_id;
+            const { repository } = yield (0,_octokit_graphql__WEBPACK_IMPORTED_MODULE_2__.graphql)(`
+    mutation updatePR($pullRequestId: ID!, $title: String) {
+      updatePullRequest(input:{pullRequestId:$pullRequestId, title:$title}) {
+        pullRequest {
+          title
+        }
+      }
+  `, {
+                pullRequestId: requestID,
+                title: 'Just testing',
+            });
+            const response = JSON.stringify(repository, undefined, 2);
+            console.log(`The response payload: ${response}`);
+        }
+        catch (error) {
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(error.message);
+        }
+    });
+}
+run();
+
+
+/***/ }),
+
 /***/ 726:
 /***/ ((module) => {
 
@@ -5905,12 +5946,52 @@ module.exports = require("zlib");
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => module['default'] :
+/******/ 				() => module;
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop)
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	__webpack_require__.ab = __dirname + "/";/************************************************************************/
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(748);
+/******/ 	return __webpack_require__(96);
 /******/ })()
 ;
