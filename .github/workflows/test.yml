@@ -19,5 +19,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          rename-regex: '(?<prefix>.*?)(?<team>[\d\w]+)-(?<ticket>\d+)(?<postfix>.*)'
+          branch-regex: '(?<prefix>.*?)(?<team>[\d\w]+)-(?<ticket>\d+)(?<postfix>.*)'
           title-format: "{team.toUpperCase}-{ticket.toUpperCase}: {postfix}"
