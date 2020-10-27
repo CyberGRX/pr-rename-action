@@ -1,8 +1,11 @@
 name: 'Hello World'
 description: 'Rename a PR on open using a regex'
 inputs:
-  rename: 
-    description: 'Regex with string replacement for renaming a PR'
+  branch-regex: 
+    description: 'Regex using named groups for formatting a PR title'
+    required: true
+  title-format: 
+    description: 'String format using named groups to generate the PR title'
     required: true
 runs:
   using: 'node12'

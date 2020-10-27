@@ -5394,6 +5394,105 @@ function onceStrict (fn) {
 
 /***/ }),
 
+/***/ 907:
+/***/ (function(module) {
+
+void function(global) {
+
+  'use strict';
+
+  //  ValueError :: String -> Error
+  function ValueError(message) {
+    var err = new Error(message);
+    err.name = 'ValueError';
+    return err;
+  }
+
+  //  create :: Object -> String,*... -> String
+  function create(transformers) {
+    return function(template) {
+      var args = Array.prototype.slice.call(arguments, 1);
+      var idx = 0;
+      var state = 'UNDEFINED';
+
+      return template.replace(
+        /([{}])\1|[{](.*?)(?:!(.+?))?[}]/g,
+        function(match, literal, _key, xf) {
+          if (literal != null) {
+            return literal;
+          }
+          var key = _key;
+          if (key.length > 0) {
+            if (state === 'IMPLICIT') {
+              throw ValueError('cannot switch from ' +
+                               'implicit to explicit numbering');
+            }
+            state = 'EXPLICIT';
+          } else {
+            if (state === 'EXPLICIT') {
+              throw ValueError('cannot switch from ' +
+                               'explicit to implicit numbering');
+            }
+            state = 'IMPLICIT';
+            key = String(idx);
+            idx += 1;
+          }
+
+          //  1.  Split the key into a lookup path.
+          //  2.  If the first path component is not an index, prepend '0'.
+          //  3.  Reduce the lookup path to a single result. If the lookup
+          //      succeeds the result is a singleton array containing the
+          //      value at the lookup path; otherwise the result is [].
+          //  4.  Unwrap the result by reducing with '' as the default value.
+          var path = key.split('.');
+          var value = (/^\d+$/.test(path[0]) ? path : ['0'].concat(path))
+            .reduce(function(maybe, key) {
+              return maybe.reduce(function(_, x) {
+                return x != null && key in Object(x) ?
+                  [typeof x[key] === 'function' ? x[key]() : x[key]] :
+                  [];
+              }, []);
+            }, [args])
+            .reduce(function(_, x) { return x; }, '');
+
+          if (xf == null) {
+            return value;
+          } else if (Object.prototype.hasOwnProperty.call(transformers, xf)) {
+            return transformers[xf](value);
+          } else {
+            throw ValueError('no transformer named "' + xf + '"');
+          }
+        }
+      );
+    };
+  }
+
+  //  format :: String,*... -> String
+  var format = create({});
+
+  //  format.create :: Object -> String,*... -> String
+  format.create = create;
+
+  //  format.extend :: Object,Object -> ()
+  format.extend = function(prototype, transformers) {
+    var $format = create(transformers);
+    prototype.format = function() {
+      var args = Array.prototype.slice.call(arguments);
+      args.unshift(this);
+      return $format.apply(global, args);
+    };
+  };
+
+  /* istanbul ignore else */
+  if (true) {
+    module.exports = format;
+  } else {}
+
+}.call(this, this);
+
+
+/***/ }),
+
 /***/ 786:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -5749,7 +5848,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(615);
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _octokit_graphql__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(79);
+/* harmony import */ var string_format__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(907);
+/* harmony import */ var string_format__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(string_format__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _octokit_graphql__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(79);
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -5762,6 +5863,7 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 
+
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -5770,15 +5872,28 @@ function run() {
                 _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed('GITHUB_TOKEN does not exist.');
                 return;
             }
-            const graphqlWithAuth = _octokit_graphql__WEBPACK_IMPORTED_MODULE_2__.graphql.defaults({
+            const graphqlWithAuth = _octokit_graphql__WEBPACK_IMPORTED_MODULE_3__.graphql.defaults({
                 headers: { authorization: `token ${token}` },
             });
             if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName !== 'pull_request') {
                 return;
             }
+            const branchRegex = new RegExp(`/${_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('branch-regex')}/ig`);
+            const titleFormat = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('title-format');
             const payload = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload;
-            const requestID = payload.pull_request.node_id;
-            console.log(`Running with ${requestID}`);
+            const pr = payload.pull_request;
+            console.log(`Running auto rename for #${pr.number} - ${pr.title}`);
+            const matches = branchRegex.exec(pr.head.ref);
+            if (!matches.groups) {
+                console.log(`${pr.head.ref} did not match ${branchRegex.source}`);
+                return;
+            }
+            const formattedTitle = string_format__WEBPACK_IMPORTED_MODULE_2__(titleFormat, matches.groups);
+            if (!formattedTitle || !formattedTitle.trim()) {
+                console.log(`${matches.groups} and ${titleFormat} resulted in an empty string`);
+                return;
+            }
+            console.log(`Renaming #${pr.number} to ${formattedTitle}`);
             try {
                 const result = yield graphqlWithAuth(`
         mutation updatePR($pullRequestId: ID!, $title: String) {
@@ -5788,8 +5903,8 @@ function run() {
             }
           }
         }`, {
-                    pullRequestId: requestID,
-                    title: 'Just testing 3',
+                    pullRequestId: pr.node_id,
+                    title: formattedTitle,
                 });
                 const response = JSON.stringify(result, undefined, 2);
                 console.log(`The response payload: ${response}`);
@@ -5797,7 +5912,6 @@ function run() {
             catch (error) {
                 console.log(`Request failed: ${JSON.stringify(error)}`);
             }
-            console.log('Done');
         }
         catch (error) {
             _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(error.message);

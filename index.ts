@@ -1,5 +1,6 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
+import * as format from 'string-format';
 import { graphql } from '@octokit/graphql';
 import { EventPayloads } from '@octokit/webhooks';
 
@@ -19,11 +20,29 @@ async function run() {
       return;
     }
 
+    const branchRegex = new RegExp(`/${core.getInput('branch-regex')}/ig`);
+    const titleFormat = core.getInput('title-format');
+
     const payload = github.context
       .payload as EventPayloads.WebhookPayloadPullRequest;
 
-    const requestID = payload.pull_request.node_id;
-    console.log(`Running with ${requestID}`);
+    const pr = payload.pull_request;
+    console.log(`Running auto rename for #${pr.number} - ${pr.title}`);
+
+    const matches = branchRegex.exec(pr.head.ref);
+    if (!matches.groups) {
+      console.log(`${pr.head.ref} did not match ${branchRegex.source}`);
+      return;
+    }
+
+    const formattedTitle = format(titleFormat, matches.groups);
+    if (!formattedTitle || !formattedTitle.trim()) {
+      console.log(
+        `${matches.groups} and ${titleFormat} resulted in an empty string`,
+      );
+      return;
+    }
+    console.log(`Renaming #${pr.number} to ${formattedTitle}`);
 
     try {
       const result = await graphqlWithAuth(
@@ -36,8 +55,8 @@ async function run() {
           }
         }`,
         {
-          pullRequestId: requestID,
-          title: 'Just testing 3',
+          pullRequestId: pr.node_id,
+          title: formattedTitle,
         },
       );
 
@@ -46,7 +65,6 @@ async function run() {
     } catch (error) {
       console.log(`Request failed: ${JSON.stringify(error)}`);
     }
-    console.log('Done');
   } catch (error) {
     core.setFailed(error.message);
   }
