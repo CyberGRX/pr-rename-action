@@ -20,8 +20,7 @@ async function run() {
       return;
     }
 
-    console.log(`Regex /${core.getInput('branch-regex')}/ig`);
-    const branchRegex = new RegExp(`/${core.getInput('branch-regex')}/ig`);
+    const branchRegex = new RegExp(core.getInput('branch-regex'), 'ig');
     const titleFormat = core.getInput('title-format');
 
     const payload = github.context
