@@ -66,6 +66,9 @@ async function run() {
         },
       );
 
+      // Set this actions output to the matched groups
+      core.setOutput('matches', matches.groups);
+
       const response = JSON.stringify(result, undefined, 2);
       console.log(`The response payload: ${response}`);
     } catch (error) {

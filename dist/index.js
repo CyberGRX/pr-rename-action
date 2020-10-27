@@ -5911,6 +5911,8 @@ function run() {
                     pullRequestId: pr.node_id,
                     title: formattedTitle,
                 });
+                // Set this actions output to the matched groups
+                _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('matches', matches.groups);
                 const response = JSON.stringify(result, undefined, 2);
                 console.log(`The response payload: ${response}`);
             }
