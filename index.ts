@@ -35,8 +35,13 @@ async function run() {
       return;
     }
 
-    console.log(`TitleFormat: ${titleFormat}`);
-    const formattedTitle = format(titleFormat, matches.groups);
+    // Create a formatter with custom transforms
+    const fmt = format.create({
+      upper: s => s.toUpperCase(),
+      normalize: s => s.replaceAll(/[\W]/g, ' ').trim(),
+    });
+
+    const formattedTitle = fmt(titleFormat, matches.groups);
     if (!formattedTitle || !formattedTitle.trim()) {
       console.log(
         `${matches.groups} and ${titleFormat} resulted in an empty string`,

@@ -5888,8 +5888,12 @@ function run() {
                 console.log(`${pr.head.ref} did not match ${branchRegex.source}`);
                 return;
             }
-            console.log(`TitleFormat: ${titleFormat}`);
-            const formattedTitle = string_format__WEBPACK_IMPORTED_MODULE_2__(titleFormat, matches.groups);
+            // Create a formatter with custom transforms
+            const fmt = string_format__WEBPACK_IMPORTED_MODULE_2__.create({
+                upper: s => s.toUpperCase(),
+                normalize: s => s.replaceAll(/[\W]/g, ' ').trim(),
+            });
+            const formattedTitle = fmt(titleFormat, matches.groups);
             if (!formattedTitle || !formattedTitle.trim()) {
                 console.log(`${matches.groups} and ${titleFormat} resulted in an empty string`);
                 return;
