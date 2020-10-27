@@ -1,12 +1,15 @@
 name: 'PR Title Formatter'
 description: 'Rename a PR by processing the branch name using a regex'
 inputs:
-  branch-regex: 
-    description: 'Regex with named groups used to process the PR's source branch'
+  branch-regex:
+    description: 'Regex with named groups used to process the source branch for the PR.'
     required: true
-  title-format: 
-    description: 'String format using the branch-regex named groups that will construct a clean PR title'
+  title-format:
+    description: 'String format using the `branch-regex` named groups that will construct a clean PR title.'
     required: true
+outputs:
+  matches:
+    description: 'The groups that were matched by the `branch-regex`.'
 runs:
   using: 'node12'
   main: 'dist/index.js'
