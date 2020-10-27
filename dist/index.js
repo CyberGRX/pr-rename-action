@@ -5891,7 +5891,7 @@ function run() {
             // Create a formatter with custom transforms
             const fmt = string_format__WEBPACK_IMPORTED_MODULE_2__.create({
                 upper: s => s.toUpperCase(),
-                normalize: s => s.replaceAll(/[\W]/g, ' ').trim(),
+                normalize: s => s.replace(/\W/g, ' ').trim(),
             });
             const formattedTitle = fmt(titleFormat, matches.groups);
             if (!formattedTitle || !formattedTitle.trim()) {
