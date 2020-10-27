@@ -5493,6 +5493,47 @@ void function(global) {
 
 /***/ }),
 
+/***/ 464:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+var __webpack_unused_export__;
+
+__webpack_unused_export__ = ({ value: true });
+var SMALL_WORDS = /\b(?:an?d?|a[st]|because|but|by|en|for|i[fn]|neither|nor|o[fnr]|only|over|per|so|some|tha[tn]|the|to|up|upon|vs?\.?|versus|via|when|with|without|yet)\b/i;
+var TOKENS = /[^\s:–—-]+|./g;
+var WHITESPACE = /\s/;
+var IS_MANUAL_CASE = /.(?=[A-Z]|\..)/;
+var ALPHANUMERIC_PATTERN = /[A-Za-z0-9\u00C0-\u00FF]/;
+function titleCase(input) {
+    var result = "";
+    var m;
+    // tslint:disable-next-line
+    while ((m = TOKENS.exec(input)) !== null) {
+        var token = m[0], index = m.index;
+        if (
+        // Ignore already capitalized words.
+        !IS_MANUAL_CASE.test(token) &&
+            // Ignore small words except at beginning or end.
+            (!SMALL_WORDS.test(token) ||
+                index === 0 ||
+                index + token.length === input.length) &&
+            // Ignore URLs.
+            (input.charAt(index + token.length) !== ":" ||
+                WHITESPACE.test(input.charAt(index + token.length + 1)))) {
+            // Find and uppercase first word character, skips over *modifiers*.
+            result += token.replace(ALPHANUMERIC_PATTERN, function (m) { return m.toUpperCase(); });
+            continue;
+        }
+        result += token;
+    }
+    return result;
+}
+exports.Q = titleCase;
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
 /***/ 786:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -5851,6 +5892,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var string_format__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(907);
 /* harmony import */ var string_format__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(string_format__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _octokit_graphql__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(79);
+/* harmony import */ var title_case__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(464);
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -5860,6 +5902,7 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+
 
 
 
@@ -5891,7 +5934,7 @@ function run() {
             // Create a formatter with custom transforms
             const fmt = string_format__WEBPACK_IMPORTED_MODULE_2__.create({
                 upper: s => s.toUpperCase(),
-                normalize: s => s.replace(/\W/g, ' ').trim(),
+                normalize: s => (0,title_case__WEBPACK_IMPORTED_MODULE_4__/* .titleCase */ .Q)(s.replace(/\W/g, ' ').trim()),
             });
             const formattedTitle = fmt(titleFormat, matches.groups);
             if (!formattedTitle || !formattedTitle.trim()) {

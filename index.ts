@@ -3,6 +3,7 @@ import * as github from '@actions/github';
 import * as format from 'string-format';
 import { graphql } from '@octokit/graphql';
 import { EventPayloads } from '@octokit/webhooks';
+import { titleCase } from 'title-case';
 
 async function run() {
   try {
@@ -38,7 +39,7 @@ async function run() {
     // Create a formatter with custom transforms
     const fmt = format.create({
       upper: s => s.toUpperCase(),
-      normalize: s => s.replace(/\W/g, ' ').trim(),
+      normalize: s => titleCase(s.replace(/\W/g, ' ').trim()),
     });
 
     const formattedTitle = fmt(titleFormat, matches.groups);

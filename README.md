@@ -13,7 +13,7 @@ This action automatically renames a PR using a regex with named groups and [cust
 
 There are 2 special transforms available
 1. `{group!upper}` - will transform the group to upper case.
-1. `{group!normalize}` - will transform the group, replacing non words with space and trimming the resulting string.
+1. `{group!normalize}` - will transform the group, replacing non words with space, converting to title case, and trimming the resulting string.
 
 ## Outputs
 
