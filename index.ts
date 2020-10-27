@@ -30,7 +30,7 @@ async function run() {
     console.log(`Running auto rename for #${pr.number} - ${pr.title}`);
 
     const matches = branchRegex.exec(pr.head.ref);
-    if (!matches.groups) {
+    if (!matches || !matches.groups) {
       console.log(`${pr.head.ref} did not match ${branchRegex.source}`);
       return;
     }
