@@ -23,6 +23,14 @@ The groups that were matched by the `branch-regex`.
 
 ## Example usage
 
+It is recommended that you only run this action when a PR is opened so you do not overwrite a custom title.
+```
+on:
+  pull_request:
+    types: [opened, synchronize]
+```
+
+Example step
 ```
 name: Rename PR
 uses: CyberGRX/pr-rename-action@v1.0
