@@ -20,4 +20,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           branch-regex: '(?<prefix>.*?)(?<team>[\d\w]+)-(?<ticket>\d+)(?<postfix>.*)'
-          title-format: "{team.toUpperCase}-{ticket.toUpperCase}: {postfix.replaceAll(/\W/g, ' ')}"
+          title-format: '{team.toUpperCase}-{ticket.toUpperCase}: {postfix.replaceAll(/\\W/g, " ")}'
