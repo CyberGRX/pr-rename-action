@@ -5888,6 +5888,7 @@ function run() {
                 console.log(`${pr.head.ref} did not match ${branchRegex.source}`);
                 return;
             }
+            console.log(`TitleFormat: ${titleFormat}`);
             const formattedTitle = string_format__WEBPACK_IMPORTED_MODULE_2__(titleFormat, matches.groups);
             if (!formattedTitle || !formattedTitle.trim()) {
                 console.log(`${matches.groups} and ${titleFormat} resulted in an empty string`);

@@ -35,6 +35,7 @@ async function run() {
       return;
     }
 
+    console.log(`TitleFormat: ${titleFormat}`);
     const formattedTitle = format(titleFormat, matches.groups);
     if (!formattedTitle || !formattedTitle.trim()) {
       console.log(
