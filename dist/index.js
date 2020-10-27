@@ -5878,6 +5878,7 @@ function run() {
             if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName !== 'pull_request') {
                 return;
             }
+            console.log(`Regex /${_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('branch-regex')}/ig`);
             const branchRegex = new RegExp(`/${_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('branch-regex')}/ig`);
             const titleFormat = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('title-format');
             const payload = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload;
