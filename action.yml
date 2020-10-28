@@ -7,9 +7,16 @@ inputs:
   title-format:
     description: 'String format using the `branch-regex` named groups that will construct a clean PR title.'
     required: true
+  check-format:
+    description: 'String format using the `branch-regex` named groups, if the original title starts with this format, auto formatting is skipped.'
+    required: false
 outputs:
   matches:
     description: 'The groups that were matched by the `branch-regex`.'
+  originalTitle:
+    description: 'The original title of the PR.'
+  formattedTitle:
+    description: 'The formatted title that this action applied to the PR.'
 runs:
   using: 'node12'
   main: 'dist/index.js'

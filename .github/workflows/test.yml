@@ -21,3 +21,4 @@ jobs:
         with:
           branch-regex: '(?<prefix>.*?)(?<team>[\d\w]+)-(?<ticket>\d+)(?<postfix>.*)'
           title-format: '{team!upper}-{ticket!upper}: {postfix!normalize}'
+          check-format: '{team!upper}-{ticket!upper}'
