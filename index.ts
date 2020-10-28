@@ -23,6 +23,7 @@ async function run() {
 
     const branchRegex = new RegExp(core.getInput('branch-regex'), 'ig');
     const titleFormat = core.getInput('title-format');
+    const checkFormat = core.getInput('check-format');
 
     const payload = github.context
       .payload as EventPayloads.WebhookPayloadPullRequest;
@@ -30,11 +31,17 @@ async function run() {
     const pr = payload.pull_request;
     console.log(`Running auto rename for #${pr.number} - ${pr.title}`);
 
+    // Set the action's output for the originalTitle
+    core.setOutput('originalTitle', pr.title);
+
     const matches = branchRegex.exec(pr.head.ref);
     if (!matches || !matches.groups) {
       console.log(`${pr.head.ref} did not match ${branchRegex.source}`);
       return;
     }
+
+    // Set the action's output for the matched groups
+    core.setOutput('matches', matches.groups);
 
     // Create a formatter with custom transforms
     const fmt = format.create({
@@ -49,6 +56,19 @@ async function run() {
       );
       return;
     }
+
+    if (checkFormat) {
+      const formattedCheck = fmt(checkFormat, matches.groups);
+      if (pr.title.toLowerCase().startsWith(formattedCheck.toLowerCase())) {
+        console.log(
+          `The title ${pr.title} already starts with ${formattedCheck} not renaming.`,
+        );
+        return;
+      }
+    }
+
+    // Set the action's output for the formattedTitle
+    core.setOutput('formattedTitle', formattedTitle);
     console.log(`Renaming #${pr.number} to ${formattedTitle}`);
 
     try {
@@ -66,9 +86,6 @@ async function run() {
           title: formattedTitle,
         },
       );
-
-      // Set this actions output to the matched groups
-      core.setOutput('matches', matches.groups);
 
       const response = JSON.stringify(result, undefined, 2);
       console.log(`The response payload: ${response}`);
